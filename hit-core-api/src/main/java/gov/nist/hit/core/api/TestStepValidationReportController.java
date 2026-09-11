@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -239,7 +240,11 @@ public class TestStepValidationReportController {
 						}
 					});
 					for (int i = 1; i < reports.size(); i++) {
-						validationReportService.delete(reports.get(i).getId());
+						try {
+							validationReportService.delete(reports.get(i).getId());
+						} catch (OptimisticLockingFailureException e) {
+							logger.info("Duplicate report " + reports.get(i).getId() + " was already removed by a concurrent request");
+						}
 					}
 				}
 				return reports.get(0);
@@ -286,7 +291,11 @@ public class TestStepValidationReportController {
 	    }
 
 	    for (TestStepValidationReport report : results) {
-	        validationReportService.delete(report.getId());
+	        try {
+	            validationReportService.delete(report.getId());
+	        } catch (OptimisticLockingFailureException e) {
+	            logger.info("Report " + report.getId() + " for test step " + testStepId + " was already cleared by a concurrent request");
+	        }
 	    }
 	    // 200 OK
 	    return ResponseEntity.ok(true);

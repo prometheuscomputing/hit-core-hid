@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -159,7 +160,13 @@ public class TestCaseValidationReportController {
 		Long userId = SessionContext.getCurrentUserId(request.getSession(false));
 		if (userId == null || accountService.findOne(userId) == null)
 			throw new ValidationReportException("Invalid user credentials");
-		testCaseValidationReportService.deleteByTestCaseAndUser(userId, testCaseId);
+		try {
+			testCaseValidationReportService.deleteByTestCaseAndUser(userId, testCaseId);
+		} catch (OptimisticLockingFailureException e) {
+			// The UI clears the previous test case and its last test step in parallel; whichever
+			// request commits second finds the rows already gone. Nothing is left to delete.
+			logger.info("Records for testcase " + testCaseId + " were already cleared by a concurrent request");
+		}
 		return true;
 	}
 	
