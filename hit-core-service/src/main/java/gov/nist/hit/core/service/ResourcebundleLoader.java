@@ -383,6 +383,11 @@ public abstract class ResourcebundleLoader {
 	@Value("${app.registration.agreement}")
 	private String appRegistrationAgreement;
 
+	// The sender the UI shows. AppInfo defaults it to a NIST address; without this
+	// every fresh schema starts out advertising hit-testing@nist.gov.
+	@Value("${mail.from:}")
+	private String mailFrom;
+
 	@Value("${app.registration.submittedContent}")
 	private String appRegistrationSubmittedContent;
 
@@ -2274,6 +2279,9 @@ public abstract class ResourcebundleLoader {
 		appInfo.setRegistrationSubmittedContent(appRegistrationSubmittedContent);
 		appInfo.setRegistrationSubmittedTitle(appRegistrationSubmittedTitle);
 		appInfo.setRegistrationAcceptanceTitle(appRegistrationAcceptanceTitle);
+		if (mailFrom != null && !mailFrom.trim().isEmpty()) {
+			appInfo.setMailFrom(mailFrom.trim());
+		}
 		appInfo.setApiDocsPath("/apidocs/swagger-ui.html");
 
 		appInfo.setDivisionLogo(appDivisionLogo);
