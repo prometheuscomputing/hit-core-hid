@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
@@ -77,8 +78,19 @@ public class TestCaseValidationReportServiceImpl implements TestCaseValidationRe
   public void deleteByTestCaseAndUser(Long userId, Long testCaseId) {
     List<TestStepValidationReport> results =
         findTestStepReportsByTestCaseAndUser(userId, testCaseId);
-    if (results != null && !results.isEmpty()) {
-      testStepValidationReportRepository.delete(results);
+    if (results == null || results.isEmpty()) {
+      return;
+    }
+    // One delete per report rather than one batch: the UI clears the previous
+    // test case and its last test step at the same time, and a batch that
+    // collides with the other clear rolls back every row, not only the shared
+    // one. A row the other request already removed is simply skipped.
+    for (TestStepValidationReport report : results) {
+      try {
+        testStepValidationReportRepository.delete(report);
+      } catch (OptimisticLockingFailureException e) {
+        logger.info("Report " + report.getId() + " was already cleared by a concurrent request");
+      }
     }
   }
 
