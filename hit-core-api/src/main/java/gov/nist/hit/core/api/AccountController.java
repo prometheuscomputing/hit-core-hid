@@ -1060,6 +1060,13 @@ public class AccountController {
 		return cu;
 	}
 
+	// Every notification signs off with the programme and the host rather than
+	// a team name alone; mail.tool carries the tool name without any prefix.
+	private String signature() {
+		return "The " + TOOL_NAME + " team\n\n" + TOOL_NAME
+				+ " is part of the Standards & Interoperability Testing Tools (SITT), hosted by Valitheus.";
+	}
+
 	private void sendApplicationConfirmationNotification(Account acc) {
 		try {
 			SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
@@ -1068,7 +1075,7 @@ public class AccountController {
 			msg.setText("Dear " + acc.getUsername() + ", \n\n"
 					+ "Thank you for submitting an application for use of the " + TOOL_NAME + ".\n\n"
 					+ "Please refer to the to the documents in the Documentation tab for additional information." + "\n\n" + "Sincerely, " + "\n\n"
-					+ "The " + TOOL_NAME + " Team" + "\n\n" + "For support, contact us at '"
+					+ signature() + "\n\n" + "For support, contact us at '"
 					+ appInfoService.get().getAdminEmails().get(0) + "'");
 
 			this.mailSender.send(msg);
@@ -1088,7 +1095,7 @@ public class AccountController {
 			msg.setText("Dear " + acc.getUsername() + ", \n\n" + "You've successfully registered on the " + TOOL_NAME
 					+ " Site." + " \n" + "Your username is: " + acc.getUsername() + " \n\n"
 					+ "Please refer to the to the documents in the Documentation tab, for additional information." + "\n\n" + "Sincerely, " + "\n\n"
-					+ "The " + TOOL_NAME + " Team" + "\n\n" + "For support, contact us at '"
+					+ signature() + "\n\n" + "For support, contact us at '"
 					+ appInfoService.get().getAdminEmails().get(0) + "'");
 
 			this.mailSender.send(msg);
@@ -1107,7 +1114,7 @@ public class AccountController {
 			msg.setText(
 					"Hello Admin,  \n A new user has registered: \n\n"
 							+ "Name: " + acc.getFullName() + "\n" + "Email: " + acc.getEmail() + "\n" + "Username: "
-							+ acc.getUsername() + "\n" + " \n\n" + "Sincerely, " + "\n\n" + "The " + TOOL_NAME + " Team"
+							+ acc.getUsername() + "\n" + " \n\n" + "Sincerely, " + "\n\n" + signature()
 							+ "\n\n");
 
 			this.mailSender.send(msg);
@@ -1127,7 +1134,7 @@ public class AccountController {
 			msg.setText("Dear " + acc.getUsername() + ", \n\n"
 					+ "**** If you have not requested a new account, please disregard this email **** \n\n\n"
 					+ "Your account has been approved and you can proceed " + "to login .\n" + "\n\n" + "Sincerely, "
-					+ "\n\n" + "The " + TOOL_NAME + " Team" + "\n\n" + "For support, contact us at '"
+					+ "\n\n" + signature() + "\n\n" + "For support, contact us at '"
 					+ appInfoService.get().getAdminEmails().get(0) + "'");
 
 			this.mailSender.send(msg);
@@ -1150,7 +1157,7 @@ public class AccountController {
 					+ "You need to change your password in order to login.\n"
 					+ "Copy and paste the following url to your browser to initiate the password change:\n" + url
 					+ " \n\n" + "Please refer to the user guide for the detailed steps. " + "\n\n" + "Sincerely, "
-					+ "\n\n" + "The " + TOOL_NAME + " Team" + "\n\n" + "For support, contact us at '"
+					+ "\n\n" + signature() + "\n\n" + "For support, contact us at '"
 					+ appInfoService.get().getAdminEmails().get(0) + "'");
 
 			this.mailSender.send(msg);
@@ -1172,7 +1179,7 @@ public class AccountController {
 					+ "You password reset request has been processed.\n"
 					+ "Copy and paste the following url to your browser to initiate the password change:\n" + url
 					+ " \n\n" + "This link is valid for 20 min,"
-					+ " \n\n" + "Sincerely, " + "\n\n" + "The " + TOOL_NAME + " Team" + "\n\n"
+					+ " \n\n" + "Sincerely, " + "\n\n" + signature() + "\n\n"
 					+ "For support, contact us at '" + appInfoService.get().getAdminEmails().get(0) + "'");
 
 			this.mailSender.send(msg);
@@ -1190,7 +1197,7 @@ public class AccountController {
 			msg.setTo(acc.getEmail());
 			msg.setSubject("" + TOOL_NAME + " Password Change Notification");
 			msg.setText("Dear " + acc.getUsername() + ", \n\n" + "Your password has been successfully changed." + " \n\n"
-					+ "Sincerely,\n\n" + "The " + TOOL_NAME + " Team");
+					+ "Sincerely,\n\n" + signature());
 
 			this.mailSender.send(msg);
 		} catch (MailException ex) {
@@ -1207,8 +1214,7 @@ public class AccountController {
 			msg.setSubject("" + TOOL_NAME + " Password Change Notification");
 			msg.setText("Dear " + acc.getUsername() + ", \n\n" + "Your password has been successfully changed." + " \n\n"
 					+ "Your new temporary password is ." + newPassword + " \n\n"
-					+ "Please update your password once logged in. \n\n" + "Sincerely,\n\n" + "The " + TOOL_NAME
-					+ " Team");
+					+ "Please update your password once logged in. \n\n" + "Sincerely,\n\n" + signature());
 
 			this.mailSender.send(msg);
 		} catch (MailException ex) {
@@ -1224,8 +1230,7 @@ public class AccountController {
 			msg.setTo(acc.getEmail());
 			msg.setSubject("" + TOOL_NAME + " Account Type Change Notification");
 			msg.setText("Dear " + acc.getUsername() + ", \n\n" + "Your account type has been successfully changed."
-					+ " \n\n" + "Your are now a " + newAccountType + " \n\n" + "Sincerely,\n\n" + "The " + TOOL_NAME
-					+ " Team");
+					+ " \n\n" + "Your are now a " + newAccountType + " \n\n" + "Sincerely,\n\n" + signature());
 
 			this.mailSender.send(msg);
 		} catch (MailException ex) {
@@ -1254,7 +1259,7 @@ public class AccountController {
 			if (authorities.contains("admin")) {
 				text += "\"Admin\": Gives administration controls.\n\n";
 			}
-			text += "Sincerely,\n\n" + "The " + TOOL_NAME + " Team";
+			text += "Sincerely,\n\n" + signature();
 			msg.setText(text);
 			
 
@@ -1272,7 +1277,7 @@ public class AccountController {
 		msg.setTo(acc.getEmail());
 		msg.setSubject("" + TOOL_NAME + " Password Rest Notification");
 		msg.setText("Dear " + acc.getUsername() + ", \n\n" + "Your password has been successfully reset." + " \n"
-				+ "Your username is: " + acc.getUsername() + " \n\n" + "Sincerely,\n\n" + "The " + TOOL_NAME + " Team");
+				+ "Your username is: " + acc.getUsername() + " \n\n" + "Sincerely,\n\n" + signature());
 
 		try {
 			this.mailSender.send(msg);
@@ -1290,7 +1295,7 @@ public class AccountController {
 		msg.setSubject("" + TOOL_NAME + " Registration and Password Notification");
 		msg.setText("Dear " + acc.getUsername() + ", \n\n" + "Your password has been successfully set." + " \n"
 				+ "Your username is: " + acc.getUsername() + " \n" + "Your registration with the " + TOOL_NAME
-				+ " is complete." + " \n\n" + "Sincerely,\n\n" + "The " + TOOL_NAME + " Team");
+				+ " is complete." + " \n\n" + "Sincerely,\n\n" + signature());
 
 		try {
 			this.mailSender.send(msg);
@@ -1307,7 +1312,7 @@ public class AccountController {
 		msg.setTo(acc.getEmail());
 		msg.setSubject("" + TOOL_NAME + " Username Notification");
 		msg.setText("Dear " + acc.getUsername() + ", \n\n" + "Your username is: " + acc.getUsername() + " \n\n"
-				+ "Sincerely,\n\n" + "The " + TOOL_NAME + " Team");
+				+ "Sincerely,\n\n" + signature());
 
 		try {
 			this.mailSender.send(msg);
