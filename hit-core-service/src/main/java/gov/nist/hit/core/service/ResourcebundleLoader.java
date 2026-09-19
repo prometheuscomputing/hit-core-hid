@@ -410,6 +410,9 @@ public abstract class ResourcebundleLoader {
 	@Value("${app.uploadsFolderPath}")
 	private String uploadsFolderPath;
 	
+	@Value("${mail.from:#{null}}")
+	private String mailFrom;
+
 	@Value("${app.url}")
 	private String url;
 	
@@ -2300,6 +2303,7 @@ public abstract class ResourcebundleLoader {
 		
 		
 		
+		appInfo.setMailFrom(mailFrom);
 		appInfo.setUrl(url);
 				
 		
