@@ -104,7 +104,7 @@ public class AppInfo implements Serializable {
 
   private String apiDocsPath;
 
-  private String mailFrom = "hit-testing@nist.gov";
+  private String mailFrom;
 
   @Column(columnDefinition = "TEXT")
   private String registrationTitle;
